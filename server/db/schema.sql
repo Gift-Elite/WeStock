@@ -1,0 +1,65 @@
+-- SQLite schema for stock management system
+
+CREATE TABLE IF NOT EXISTS roles (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  role_id INTEGER NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY(role_id) REFERENCES roles(id)
+);
+
+CREATE TABLE IF NOT EXISTS items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  sku TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  quantity INTEGER DEFAULT 0,
+  box_quantity INTEGER DEFAULT 0,
+  low_threshold INTEGER DEFAULT 5,
+  medium_threshold INTEGER DEFAULT 20
+);
+
+CREATE TABLE IF NOT EXISTS stock_movements (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  item_id INTEGER NOT NULL,
+  user_id INTEGER,
+  type TEXT NOT NULL, -- restock, sale, remove
+  quantity INTEGER NOT NULL,
+  note TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY(item_id) REFERENCES items(id),
+  FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS sales (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  cashier_id INTEGER,
+  total REAL,
+  payment_method TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY(cashier_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS sale_items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  sale_id INTEGER,
+  item_id INTEGER,
+  quantity INTEGER,
+  price REAL,
+  FOREIGN KEY(sale_id) REFERENCES sales(id),
+  FOREIGN KEY(item_id) REFERENCES items(id)
+);
+
+CREATE TABLE IF NOT EXISTS calls (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  caller_id INTEGER,
+  clerk_id INTEGER,
+  status TEXT DEFAULT 'pending', -- pending, answered
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

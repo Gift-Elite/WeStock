@@ -1,0 +1,26 @@
+# Ignore node modules and local logs
+/node_modules/
+/server/node_modules/
+/client/node_modules/
+.env
+server/.env
+client/.env
+*.log
+.DS_Store
+
+#dattabase
+*.sqlite
+*.sqlite3
+
+server/uploads
+server/reports
+
+# builds
+dist
+build
+
+#logs
+npm-debug.log*
+
+server/server-start.log
+client/dist/
